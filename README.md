@@ -2,6 +2,10 @@
 This README attempts to document important notes, as prepare for CKAD exam. I started my journey towards
 CKAD exam on October 2023. I used @Mumshad Mannambeth CKAD course on udemy.
 
+## Getting information regarding mandatory replicaset yaml fields and their corresponding contents
+```
+kubectl exaplain replicaset
+```
 ## Basic contents of yaml for pod definition(nginx example)
 
 ```
@@ -52,7 +56,7 @@ kubectl scale --replicas=6 -f replicaSet-definition.yml
 ```
 ### method - 3 : Specify the type of object and the object name as follows
 ```
-kubectl scale --replicas=6 -f replicaset myapp-replicaset
+kubectl scale replicaset myapp-replicaset --replicas=6  
 ```
 ## Summary of commands for replicaSet
 ### Creating replica set
