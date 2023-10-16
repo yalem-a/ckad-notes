@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Replicaset
+metadata:
+  app:
+  type:
+
+spec:
+  template:
+
+
+replicas:
+matchLabels:
+  type:
