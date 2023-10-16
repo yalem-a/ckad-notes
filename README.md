@@ -46,7 +46,7 @@ selector:
      
 ```
 ## Scaling replicas in ReplicaSet
-### method - 1 : update conents of yaml file to the required number and run the following command
+### method - 1 : update contents of yaml file to the required number and run the following command
 ```
 kubectl replace -f replicaSet-definition.yml
 ```
@@ -67,6 +67,10 @@ kubectl create -f eplicaSet-definition.yml
 ```
 kubectl get replicaset
 ```
+### Checking pods created as a result of the applied replicaset(the pod names take replicaset name as a prefix) 
+```
+kubectl get pod
+```
 ### Deleting replica set [also deletes underlying pods]
 ```
 kubectl delete replicaset <replicaset-name>
@@ -79,4 +83,30 @@ kubectl replace -f replicaSet-definition.yml
 ### scale replica set without modifying the yaml file
 ```
 kubectl scale --replicas=6 -f replicaSet-definition.yml
+```
+## Summary of commands for deployment
+Fun fact :) 
+- Deployments are used to roll-updates, rollback updates, apply updates all at once. (Big distinction from replicaSet)
+- "ReplicaSet" and "Deployment" have almost the same content except for "kind" field
+- Applying deployment will also create replicaset
+### creating deployment
+```
+kubectl create -f deployment-definition.yml
+```
+### Checking deployment
+```
+kubectl get deployments
+```
+### Checking replica set created as a result of applying deployment
+```
+kubectl get replicaset
+```
+### Checking pods  created as a result of applying deployment (the pod names take deployment name as a prefix) 
+```
+kubectl get pods
+```
+## Summary of general commands
+### Checking all objects 
+```
+kubectl get all
 ```
