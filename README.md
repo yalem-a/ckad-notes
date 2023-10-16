@@ -93,6 +93,10 @@ Fun fact :)
 ```
 kubectl create -f deployment-definition.yml
 ```
+## Creating deployment from command line
+```
+kubectl create deployment mydeployment --image=nginx --replicas=3
+```
 ### Checking deployment
 ```
 kubectl get deployments
@@ -109,4 +113,40 @@ kubectl get pods
 ### Checking all objects 
 ```
 kubectl get all
+```
+## namespaces
+Below is are system created namespaces that exist 
+- default - By default user interacts with this name psace
+- kube-system - only managed by k8 internal processes
+- kube-public - resources that can be accessed by publicly 
+### creating namespaces 
+```
+kubectl create -f namespace-definition.yml
+```
+or using CLI
+```
+kubectl create namespace dev
+```
+### listing pods in another namespace
+```
+kubectl get pods --namespace=kube-system
+```
+### Listing pods in all namespaces
+```
+kubectl get pod --all-namespaces
+```
+OR 
+
+```
+kubectl get pod -A
+```
+
+### Switching to  a given namespace
+```
+kubectl config $(kubectl config current-context) --namespace=prod
+```
+## Quotas
+Helps to apply quota to a given name space
+```
+kubectl create -f quota-definition.yml
 ```
