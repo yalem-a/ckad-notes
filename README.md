@@ -1,4 +1,7 @@
 # Useful CKAD notes
+This README attempts to document important notes, as prepare for CKAD exam. I started my journey towards
+CKAD exam on October 2023. I used @Mumshad Mannambeth CKAD course on udemy.
+
 ## Basic contents of yaml for pod definition(nginx example)
 
 ```
