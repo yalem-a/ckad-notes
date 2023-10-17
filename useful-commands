@@ -1,5 +1,0 @@
--Checking the node on which the pod exists
-kubectl get pod -o wide
-- generating yaml file from cli
-kubectl run nginx --image nginx -o yaml dry-run-client
-
