@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-sleeper-pod
+spec:
+  containers:
+    - name: ubuntu-sleeper
+      image: ubuntu-sleeper
+      command: ["sleep2.0"] # overriding entry point in the docker image -> ENTRYPOINT ["sleep"]
+      args: ["10"] # overriding argument in the docker image -> CMD ["5]

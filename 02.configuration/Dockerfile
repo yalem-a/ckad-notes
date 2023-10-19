@@ -1,0 +1,3 @@
+FROM UBUNTU
+ENTRYPOINT ["sleep"]
+CMD ["5"]
