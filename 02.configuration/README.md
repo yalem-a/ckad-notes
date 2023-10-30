@@ -177,3 +177,98 @@ volumes:
   configMap:
     name: app-config
 ```
+## secrets
+
+### Creating secrets
+secrets can be created in the following different ways:
+- imperative
+syntax:
+```
+kubectl create secret generic \
+<secret-name> --from-literal=<key>=<value>
+```
+OR
+```
+kubectl create configmap \
+<configMap-name> --from-file=<path/to/the/file>
+```
+
+Example:
+```
+kubectl create secret generic \
+app-secret --from-literal=DB_HOST=mysql
+```
+
+- from file
+```
+kubectl create secret generic \
+<secret-name> --from-file=<path/to/the/file>
+```
+
+- declarative 
+```
+kubectl create -f secret_definition.yml
+```
+### encoding and decoding secerts
+- Encoding
+```
+echo -n 'mysql' | base64
+```
+- Decoding
+```
+echo -n 'Xdfdg==' | base64 --decode
+```
+
+### checking secrets
+```
+kubectl get secrets
+```
+```
+kubectl describe secrets
+```
+### viewing encoded secrets
+```
+kubectl get secrets app-secret -o yaml
+```
+### Injecting secrets
+- injecting as all env variables in to pods
+```
+---
+spec:
+  containers:
+    - name: app_name
+      image: app1
+    ports:
+      containerPort: 8080
+    envFrom:
+        - secretRef: 
+            name: app-secret
+
+```
+- injecting as single env variables in to pod
+```
+---
+spec:
+  containers:
+    - name: app_name
+      image: app1
+    ports:
+      containerPort: 8080
+    env:
+      - name: DB_PASSWORD
+        valueFrom: 
+          secretKeyRef: 
+            name: app-secret
+            key: DB_PASSWORD
+```
+- injecting as volume
+Eache secret key is a filename and the content is it is value
+```
+---
+volumes:
+      - name: app_name_secret_volume
+        secret:
+          secretName: app-secret
+```
+
+
