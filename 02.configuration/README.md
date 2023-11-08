@@ -270,5 +270,71 @@ volumes:
         secret:
           secretName: app-secret
 ```
+### Forcing pod edit
+```
+kubectl replace --force filename.yaml
+```
+## Docker security
+- Full list of permission owned by root user can be found at
+```
+/usr/include/linux/capability.h
+```
+- Define non-root user in docker
+```
+docker --user=1000 run ubuntu sleep 3600
+```
+or 
 
+```
+FROM ubuntu
 
+USER 1000
+```
+
+- Limit actions by docker user
+```
+docker run --cap-drop kill ubuntu
+
+```
+- Add permission to docker user
+```
+docker run --cap-add MAC_ADMIN ubuntu
+```
+- Run a container with all privileges (even root user on container does not have all privileges)
+```
+docker run --privileges  ubuntu
+```
+## Security context (kubernetes security)
+- security can be applied on CONTAINER level or POD level
+**At POD level**
+```
+# Security at the POD level
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+  ....
+```
+**At CONTAINER level**
+```
+# Security at the POD level
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+spec:
+  containers:
+    securityContext:
+    runAsUser: 1000
+    capabilites:
+    add: ["MAC_ADMIN"]
+  ....
+```
+***NOTE*** 
+capabilities are only supported at CONTAINER level not at POD level
+
+## Service account
