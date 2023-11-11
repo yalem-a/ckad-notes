@@ -337,4 +337,47 @@ spec:
 ***NOTE*** 
 capabilities are only supported at CONTAINER level not at POD level
 
-## Service account
+## Service accounts
+There are two types of accounts in k8
+- user account : for an admin or developer to access k8 cluster
+- service account : for a thirdparty application to acess k8 cluster , like prometheus, jenkins ,etc.
+***Creating a service account***
+```
+kubectl create serviceaccount dashboard-sa
+```
+***view a service account***
+```
+kubectl get serviceaccount
+```
+***Note***
+When a service account is created a token is also created which will be used by the application
+
+***view a token associated with service account***
+```
+kubectl describe secret serviceaccountName-token-kbbdm
+```
+***Note***
+
+Default tokens created are located in a location /var/run/secrets/kubernetes.io/serviceaccount
+
+***Note***
+In version 1.24, there is not token automatically generated when serviceaccount was created.
+To create a token in Kubernetes 1.24
+```
+kubectl create token <serviceaccount-name>
+```
+The token will be shown in the screen and it is time bound
+
+To create a non-expiry token
+
+```
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: my-secret
+  annotations: kubernetes.io/service-account.name: dashboard-sa
+
+```
+
+
