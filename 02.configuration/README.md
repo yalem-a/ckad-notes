@@ -379,5 +379,5 @@ metadata:
   annotations: kubernetes.io/service-account.name: dashboard-sa
 
 ```
-
+## Resource requirements
 
