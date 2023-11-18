@@ -380,4 +380,34 @@ metadata:
 
 ```
 ## Resource requirements
+- It is the kubernetes scheduler's job to find a node with sufficient resources to create the pod
+- The defines in ints definition yaml file the resource it needs (memory, cpu)
 
+***cpu settings***
+
+- The lowest possible value is 0.001 or 1mili
+- 1 CPU means 
+  - 1 vCPU in AWS
+  - 1 GCP core
+  - 1 azure core
+  - 1 Hyperthread
+***memory settings***
+
+- Ki stands for kibibyte
+- Mi stands for mebibyte
+- Gi stands for Gibibyte
+**notes**
+- 1Ki = 1,024 bytes
+- 1Mi = 1,048,576 bytes
+- 1Gi = 1,073,741,824 bytes
+
+- By default, containers does not have limits on how much resources they consume on a given node. We can however add limits on the resource consumtion
+in the pod definition file
+- Containers may attempt to use more resources than the predefined limits
+   - in case of memory: the container can use a little bit more memory than limits, but if it continues to more memory, the container will terminated
+and Out Of Memory (OOM)error is seen
+   - in case of CPU: cpu usage is throttled to a predefined limits. It cant go beyond the limit.
+- How do we ensure if pods have the default setting applied? This is can be done via LimitRange. This is applied on the namespace level.
+This is enforced when a pod is created. Check the LimitRange definition file
+- Is there a way where we can define a constraint on a node, to say that all pods in a given node could not consume more than this much of CPU and memory?
+This can be done using resource quotas. This is done on a namespace level. Check the quota definition file

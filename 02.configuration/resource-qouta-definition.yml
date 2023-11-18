@@ -1,0 +1,11 @@
+#For CPU
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: my-resource-quota
+spec:
+  hard:
+    requests.cpu: 4  # Total cpu requests by all pods  on a node should be 4
+    requests.memory: 4Gi # Total memory requests by all pods  on a node should be 4Gi
+    limits.cpu: 10
+    limits.memory: 10Gi
