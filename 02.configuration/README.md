@@ -401,13 +401,100 @@ metadata:
 - 1Mi = 1,048,576 bytes
 - 1Gi = 1,073,741,824 bytes
 
-- By default, containers does not have limits on how much resources they consume on a given node. We can however add limits on the resource consumtion
+- By default, containers does not have limits on how much resources they consume on a given node. We can however add limits on the resource consumption
 in the pod definition file
 - Containers may attempt to use more resources than the predefined limits
-   - in case of memory: the container can use a little bit more memory than limits, but if it continues to more memory, the container will terminated
+   - in case of memory: the container can use a little more memory than limits, but if it continues to more memory, the container will terminated
 and Out Of Memory (OOM)error is seen
    - in case of CPU: cpu usage is throttled to a predefined limits. It cant go beyond the limit.
-- How do we ensure if pods have the default setting applied? This is can be done via LimitRange. This is applied on the namespace level.
+- How do we ensure if pods have the default setting applied? This  can be done via LimitRange. This is applied on the namespace level.
 This is enforced when a pod is created. Check the LimitRange definition file
 - Is there a way where we can define a constraint on a node, to say that all pods in a given node could not consume more than this much of CPU and memory?
 This can be done using resource quotas. This is done on a namespace level. Check the quota definition file
+
+## Taints and Tolerations 
+***Note*** 
+- This topic tries to answer what pods are placed on which nodes?
+- Taint is like a spary which avoid the bug
+- The bug is intolerant to the spary 
+- Some bugs can be tolerant to the spary, therefore can land on the person
+- There are two things that can decide whether the bug can land on a person
+  - The taint on the person
+  - The bug's toleration level to that particular taint
+- In the above example
+   - The person is a NODE
+   - The bug is POD
+***Note***
+   - Taints and tolerations decide what pods can be scheduled on node
+   - By default pods does not have toleration
+   - If we wanted a given pod to be placed on the node with taint, we can add toleration criteria to the pod
+   - Taints are placed on nodes and tolertions are placed on pods
+### Taints
+- Adding a taint to the node
+```
+kubectl taint nodes <node-name> key=value:taint-effect
+```
+Example: 
+```
+kubectl taint nodes node1 app=blue:NoSchedule
+```
+- taint-effects : Determines what happens to pods that do not tolerate this taint
+   - NoSchedule - The pod will not be placed on the node
+   - PreferNoSchedule - The pod might not be placed on a node , but this is NOT guaranteed.
+   - NoExecute - Pods will not be placed on the node and existing pods that do not tolerate will be evicted 
+Tolerations : are placed on a pod
+
+***Note*** 
+- taints and tolerations does not tell the pod  to go to a particular node.
+- Instead, it tells the node to only accept pods with certain tolerations.
+- If our requirement is to restrict a pod to certain nodes, it is achieved through node affinity
+
+***Note***
+- During setup taint is set on the master node automatically that prevents any pods from being scheduled on this node.
+- If it was not for this setting, master node could have hosted pods. To check this run the following command
+```
+kubectl describe node kubemaster |  grep Taint
+```
+
+VIP commands on noes
+- Getting the nodes
+```
+kubectl get nodes
+```
+- Getting taints applied on a given node 
+```
+kubectl describe node node01 | grep Taint
+```
+- Create a taint on node01 
+```
+kubectl  taint nodes node01 spray=mortein:NoSchedule
+```
+
+- Command to remove a taint from controlplane
+
+```
+kubectl taint node <node-name> key=value:effect-
+```
+Example:
+```
+kubectl taint node controlplane node-role.kubernetes.io/master:NoSchedule-
+```
+### Node selectors
+- This to force pods to a specific nodes
+- We can use the following methods
+   - node selectors
+Label the nodes to use node selectors
+```
+kubectl label nodes <node-name> <label-key>=<label-value>
+```
+Example:
+```
+kubectl label nodes node-01 size=Large
+```
+Now refer this label in the pod-definition file under "nodeSelector". check pod-definition file
+   - Node affinity
+Allows us to specify more complex requirments like below
+** place a pod on a node that is labeled with "Large" or "Medium", Not on "Small".
+This can not be achieved through "nodeSelectors"
+### Node affinity
+
