@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-web-app
+  labels:
+    app: simple-web-app
+spec:
+  containers:
+    - name: simple-web-ap
+      image: nginx
+      ports:
+        containerPort: 8080
+      livenessProbe:
+        exec:  # custom shell command
+          command:
+            - cat
+            - /app/is_ready

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-web-app
+  labels:
+    app: simple-web-app
+spec:
+  containers:
+    - name: simple-web-ap
+      image: nginx
+      ports:
+        containerPort: 8080
+      readinessProbe:
+        httpGet: # for http test
+          path: /api/ready
+          port: 8080
+        initialDelaySeconds: 10 # if we know the application would take around 10 sec to start
+        periodSeconds: 5 # defines how often to probe. By default if the app is ready after 3 attempts, then the probe will stop. To make more attempts use failureThreshold
+        failureThreshold: 8 # to make more attempts than default which is only 3
