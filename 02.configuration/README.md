@@ -415,9 +415,9 @@ This can be done using resource quotas. This is done on a namespace level. Check
 ## Taints and Tolerations 
 ***Note*** 
 - This topic tries to answer what pods are placed on which nodes?
-- Taint is like a spary which avoid the bug
-- The bug is intolerant to the spary 
-- Some bugs can be tolerant to the spary, therefore can land on the person
+- Taint is like a spray which avoids the bug
+- The bug is intolerant to the spray 
+- Some bugs can be tolerant to the spray, therefore can land on the person
 - There are two things that can decide whether the bug can land on a person
   - The taint on the person
   - The bug's toleration level to that particular taint
@@ -440,7 +440,7 @@ kubectl taint nodes node1 app=blue:NoSchedule
 ```
 - taint-effects : Determines what happens to pods that do not tolerate this taint
    - NoSchedule - The pod will not be placed on the node
-   - PreferNoSchedule - The pod might not be placed on a node , but this is NOT guaranteed.
+   - PreferNoSchedule - The pod might  be placed on a node , but this is NOT guaranteed.
    - NoExecute - Pods will not be placed on the node and existing pods that do not tolerate will be evicted 
 Tolerations : are placed on a pod
 
@@ -491,10 +491,34 @@ Example:
 ```
 kubectl label nodes node-01 size=Large
 ```
+Checking labels:
+```
+kubectl get nodes --show-labels
+```
+
 Now refer this label in the pod-definition file under "nodeSelector". check pod-definition file
    - Node affinity
 Allows us to specify more complex requirments like below
 ** place a pod on a node that is labeled with "Large" or "Medium", Not on "Small".
 This can not be achieved through "nodeSelectors"
 ### Node affinity
+Node affinity features makes sure pods are hosted on particular nodes. Check the pod-definition file
+What if node affinity does not match any nodes? This is answered node affinity types that is defined in the pod definition file
 
+**Below are affinity types**
+   - **required**DuringSchedulingIgnoredDuringExecution 
+       _DuringScheduling_ (preferred)
+          - Label is mandatory. If label is not found during the creation of the pod, creation of pod is ABORTED
+       _DuringExecution_ (Ignored)
+          - If label is removed once the pod is running nothing is going to happen. POD will continue to run
+
+   - **preferred**DuringSchedulingIgnoredDuringExecution - Label is NOT mandatory. Try your best to match, if not found , ignore node affinity
+      **- _DuringScheduling_ (preferred)**
+          - Label is NOT mandatory. Try your best to match, if not found , ignore node affinity and create the pod
+      **- _DuringExecution_ (Ignored)**
+          - If label is removed once the pod is running nothing is going to happen. POD will continue to run
+     - requiredDuringSchedulingRequiredDuringExecution (planned in the future releases)
+      **- _DuringScheduling_ (preferred)**
+          - Label is  mandatory. Try your best to match, if not found  creation of pod is ABORTED
+      **- _DuringExecution_ (Required)**
+            - If label is removed from a node once the pod is running the POD will be evicted/terminated from the node.
