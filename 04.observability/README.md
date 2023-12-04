@@ -48,3 +48,45 @@ This will allow us ensuring the traffic will go the new pod only when the readin
 If the container is fine and the pod is fine, but the users are having issues accessing the application due to the issues in the application.
 In this case we need **liveness probe** to check the application with the container is healthy.
 If the container is unhealthy the container will be destroyed and re-created again
+### Container logging
+- Checking logs
+
+```
+kubectl logs -f <pod-name>
+```
+- Checking logs for multi-container pod
+
+```
+kubectl logs -f <pod-name> <container-name>
+```
+
+### Monitor and debug applications 
+- Metrics server: an in-memory monitoring solution does not store the metrics in a disk
+- How does k8 get this metrics from each node?
+This is using  **kubelet** agent installed on each node.
+- Kubelet is responsible for receiving instructions from k8 master node and running pods on the node
+- kubelet also contains sub-component known as **cAdvisor** (container advisor)
+- cAdvisor is responsible for receiving performance metrics from pods and exposing them via kubelet api for the metrics to be available for metric server
+- Enabling metrics server on minikube
+
+```
+minikube addons enable metrics server
+```
+
+- Enabling metrics server on others
+```
+git clone  http://github.com/kubernetes-incubator/metrics-serve
+```
+- apply configs
+```
+kubectl apply -f deploy/1.8+
+```
+
+- Checking performance metrics of node once metrics server is deployed
+```
+kubectl top node
+```
+- Checking performance metrics of pod
+```
+kubectl top pod
+```
