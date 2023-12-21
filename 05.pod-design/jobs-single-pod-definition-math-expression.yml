@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: math-pod
+spec:
+  containers:
+    - name:  math-add
+      image: ubuntu
+      command: ["expr", "3", "+" , "2"]
+  restartPolicy: Always # the pod will always recreate the container when it exits,
+                        # never: which means k8 does not restart the container once the job is finished

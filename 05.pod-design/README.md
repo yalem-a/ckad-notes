@@ -136,3 +136,61 @@ Once tests are completed on the newer version of the deployment , update the old
       the newer version.
 Istio allows managing both blue/green and canary deployments very well. Kubernetes native implementation utilizes 
 deployment and service implementation. 
+## Jobs
+Workload types a container can serve: web, application, db - this workloads meant to run for a long time
+batch processing , analytics - run for a while and finish - meant to live for a short a period of time
+
+Examples:
+- calculate 3+2 
+```
+kubectl run ubuntu expr 3 + 2
+```
+- The above expression can be run in kubernetes using pod, check "pod-definition-math-expression.yml"
+- Apply pod definition. In this the pod will compute 3 + 2 and the state will be changed to "completed" and
+will restart to re-compute. this will continue until a threshold is reached
+
+*** This is due to the fact that default restart policy which is "Always"
+```
+kubectl apply -f jobs-pod-definition-math-expression.yml
+```
+We need a manager that assigns jobs to a pods and makes sure the work is done successfully 
+_replicaset_: ensures a given no. of pods are always running a given time
+_Job_: is used to run a set of pods to perform a given task to completion. a job can be created using a definition file.
+
+- Creating jobs
+```
+kubectl apply -f jobs-definition-math-expression.yml
+```
+- checking jobs and associated jobs
+```
+kubectl get jobs
+```
+```
+kubectl get pod
+```
+- checking output of the job
+```
+kubectl logs <pod-name>
+```
+- deleting a job - deleting job also deletes associated pods
+```
+kubectl delete job <job-name>
+```
+### Creating multiple pods for jobs
+refer to "jobs-multiple-pod..." definition file
+according to this , pods are created one after the other. To change this behaviour use the "parallelism" field in the
+job definition file
+
+## CronJobs
+A **Cronjob** is a job that can be scheduled.
+
+"*/1 * * * *" -> minute hour dayOfTheMonth Month dayOfTheWeek
+
+- creating cronJobs
+```
+kubectl create -f cronjob.yml 
+```
+- checking  cronJobs
+```
+kubectl get cronjob 
+```
