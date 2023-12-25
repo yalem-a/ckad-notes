@@ -1,0 +1,25 @@
+# policy to allow ingress traffic to db-pod on tcp port 3306 from api-pod
+# The following rule blocks all traffic from all pods except api-pod
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  -  Ingress  # apply on ingress. An Egress traffic will be not affected
+  ingress:
+  - from:     # from api-pod
+    - podSelector:
+        matchLabels:
+          name: api-pod
+      namespaceSelector:
+        matchLabels:
+          name: prod
+    - ipBlock:
+        cidr: 192.168.5.10/32
+    ports:   # on port tcp 3306
+    - protocol: TCP
+      port: 3306
