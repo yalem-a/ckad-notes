@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: random-number-generator
+spec:
+  containers:
+    - image: nginx-container
+      name: nginx
+      command: ["/bin/sh", "c"]
+      args: ["shuf -i 0-100 -n 1 >> /opt/number.out;"]
+      volumeMounts:
+        - mountPath: /opt
+          name: data-volume
+  volumes:   # Defines a volume on a host
+    - name: data-volume
+      hostPath:
+        path: /data
+        type: Directory
+#  volumes: # for AWS Elastic Block Store (EBS)
+#    - name: data-volume
+#      awsElasticBlockStore:
+#        volumeID: <volume-id>
+#        fsType::: ext4
