@@ -1,0 +1,8 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-administrator
+rules:
+  - apiGroups: [""] # either named or core group. for core group we can leave it as blank
+    resources: ["nodes"] # this is the resource upon which the actions are applied
+    verbs: ["list","get", "create","delete"] # These are the actions
