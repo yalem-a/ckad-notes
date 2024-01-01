@@ -1,0 +1,23 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "pod-policy.example.com"
+webhooks:
+  - name: "pod-policy.example.com"
+    clientConfig:
+      service: # if webhook is defined inside k8 cluster
+        namespace: "webhook-namespace"
+        name: "webhook-service"
+      caBundle: "Ci0TLs0 ......TLS0K"
+#      url: "https://external-server.example.com" # path to external webhook server. This is required if the webhook is deployed on external server
+
+    rules: # Defines when to call an api server
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE"]
+        resources: ["pods"]
+        scope: "Namespaced"
+
+
+
+

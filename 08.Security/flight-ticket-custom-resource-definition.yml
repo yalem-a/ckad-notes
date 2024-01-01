@@ -1,0 +1,33 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: flighttickets.flights.com
+spec:
+  scope: Namespaced
+  group: flights.com
+  names:
+    kind: FlightTicket
+    singular: flightticket
+    plural: flighttickets  # To be shown when running kubectl api-resources
+    shortNames:
+      - ft
+  versions:
+    - name: v1
+      served: true
+      storage: true
+
+      schema: # Goes into the spec section of the crd
+        openAPIV3Schema:
+          type: Object
+          properties:
+            spec:
+              type: Object
+              properties:
+                from:
+                  type: string
+                to:
+                  type: string
+                number:
+                  type: integer
+                  minimum: 1
+                  maximum: 10

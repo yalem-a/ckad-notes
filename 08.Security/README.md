@@ -302,3 +302,150 @@ cat /etc/kubernetes/manifests/kube-apiserver.yaml
 ```
 ps -ef | grep kube-apiserver | grep admission-plugins
 ```
+### Validating and mutating admission controllers
+
+- _Validating admission controller_ (Example: _NamespaceExists_) : is a kind of admission controller tha checks if name space exists. Therefore, this referred 
+to has _validating admission controller_. 
+  - Validates the request and either allow or deny the request
+- _Mutating admission controller_ (Example: _DefaultStorageClass_) : adds default storage class name in the PVC if it is not specified. This type of adimssion 
+controller is known as mutating admission controller. 
+  - It can change the object itself before it is created.
+- There could be admission controllers that does both mutating and validation
+  - Mutating admission controllers are invoked first before Validate admission controllers.
+    - _NamespaceAutoProvision_(mutating) comes before _NamespaceExists_(validating)
+*** We can also have our own admission controllers to support our own logic. To support external admission controllers 
+    there are two admission controllers available.
+    - MutatingAdmissionWebhook
+    - ValidatingAdmissionWebhook
+- This is implemented using an external AdmissionWebhook server that validates and/or mutates the request.
+  - it receives a request in json format, and it responds with review outcome in json format.
+- Steps to realize external admission controllers
+  - step1: Deploy AdmissionWebhook Server
+    - it is a basic api server which does _validate_ and _mutate_ implementations.
+    - it can be deployed as deployment in k8 cluster
+    - expose the deployment using k8 service (webhook service)
+  - step2: configure webhook on k8 by creating webhook configuration object (check yml files)
+    - configure k8 cluster to reach out to webhook to validate or mutate requests
+Excercises:
+  - Create TLS secret
+```
+kubectl create secret tls tls-secret --cert=path/to/tls.cert --key=path/to/tls.key -n webhook-demo
+```
+### API versions
+- Each API group has different versions
+- An API group can support multiple versions at the same time
+  - all these version can be used in the yaml files
+- When an API group is at
+  - /v1 - it means it is at ga stable version (generally available stable version)
+    - enabled by default
+    - it also a preferred storage version
+  - /v1beta1: All major bugs in /v1aplha1 is fixed and end-to-end testing is done
+    - enabled by default
+    - might have bugs
+  - /v1aplha1: an api is developed and merged to k8 code base, becomes k8 release for the 1st time
+    - This is not enabled by default
+    - this is not reliable
+- If an object is created with API version set to v1alpha1 or v1beta1, those will be converted into preferred storage
+  version which is v1 before storing them to etcd database
+- Preferred version is a default version when we retrieve information through api, (like kubectl get ..)
+- Storage version is a version in which an object is stored in etcd in respective of the version we used in yml files 
+- Checking if preferred version of an API
+  - Check the api url http://api-server/batch
+- Checking if storage version of an API
+  - Use ETCDCTL utility to query etcd database
+- Enabling or disabling api versions is done in api server in "_--runtime-config_=batch/v2alpha"
+### API Deprecations
+- API group can support multiple versions at the same time. 
+  - But why do we need to support multiple versions at the same time?
+  - How many should we support?
+  - When can we remove an older version when it is no longer required?
+- All the above questions are answered by _API deprecation policy_
+
+#### API Deprecation policies
+- API elements may only be removed by incrementing the version of the API group
+- API objects must be able to round-trip between API versions in a given release without information loss,
+  except whole REST resources that do not exist in some versions
+- There are also 2 or more  rules check the course pds
+**kubectl convert**
+- when a new k8 version is released new API groups are added old apis are deprecated and removed.
+- We may have a lots of yml files in the old version
+- To convert older yml files into a newer version we can use the following
+```
+kubectl convert -f <old-file> --output-version <new-api>
+```
+Example:
+```
+kubectl convert -f nginx --output-version apps/v1
+```
+** _kubectl convert_ command might not be installed by default
+- Getting short names of API resources
+```
+kubectl api-resources
+```
+- Identify which API group a resource called _job_ is part of
+```
+kubectl explain job
+```
+- What is the preferred version for authorization.k8s.io api group?
+step1: start a proxy to kube-apiserver
+```
+kubectl proxy 8001
+```
+step1: start a proxy to kube-apiserver
+```
+kubectl proxy 8001&
+```
+step2: run the following curl command
+```
+curl  http://localhost:8001/apis/authorization.k8s.io
+```
+* Enable the v1alpha1 version for rbac.authorization.k8s.io API group on the controlplane node.
+ - step1: take a backup of existing manifest
+ - step2: add the following
+   * --runtime-config_=rbac.authorization.k8s.io/v2alpha
+
+### Custom Resource Definitions
+- create deploy
+```
+kubectl apply -f deploy.yml
+```
+- get deploy
+```
+kubectl get deploy
+```
+- delete deploy
+```
+kubectl delete -f deploy.yml
+```
+- All the above commands is going to create, list and modify deployment object/resource in ETCD datastore
+- _Controller_: is going to determine the no. of pods that need to be created based on the _replica_ settings in deployment yaml file
+  - Continuously monitors the status of resources that it is supposed to manage
+- We can create object of mentioned in crd yaml file
+```
+kubectl create -f flight-ticket-definition.yml
+```
+- We can list the crd
+```
+kubectl get flightTicket
+```
+- We delete the crd
+```
+kubectl delete flightTicket
+```
+- we might also need a custom controller to make an API call to do booking on book-flight.com
+** The above actions necessitates the availability of _custom resource_ and a  _custom controller_
+#### Creating custom resource
+- Before running above commands first we need to create CRD as below
+```
+kubectl create -f flight-ticket-custom-resource-definition.yml
+```
+- Then we can  the likes of the following
+```
+kubectl create -f flight-ticket-definition.yml
+```
+#### Creating custom controllers
+Custom resource that been created in the above steps only stays in etcd database. If we need to watch these resources
+we need a custom resource controller. actions on the crd is defined by custom controller.
+
+**Exercises on CRD**
+
