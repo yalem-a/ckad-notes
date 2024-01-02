@@ -446,6 +446,30 @@ kubectl create -f flight-ticket-definition.yml
 #### Creating custom controllers
 Custom resource that been created in the above steps only stays in etcd database. If we need to watch these resources
 we need a custom resource controller. actions on the crd is defined by custom controller.
-
-**Exercises on CRD**
+- Tasks done by custom controller
+  - Continuously monitoring k8 cluster  and listen to event  on the resources
+  - perform actions - book a flight ticket, cancel flight ticket
+- We can use the following GitHub repo to build custom controller
+  - Clone the repo
+```
+https://github.com/kubernetes/sample-controller
+```
+ - make necessary modifications on _controller.go_
+ - Build the application
+```
+go build -o sample.controller .
+```
+  - run the application
+```
+./sample.controller -kubeconfig=$HOME/.kube/config
+```
+  - We can then build the image in docker and package it for k8 installation to run as k8 deployment/pod
+    - This ensures that custom controller is running as deployment/pod to monitor our custom resource
+#### Operator framework
+- If we are not using operator framework custom resources and custom controllers run as separate entity in k8 cluster
+- We can however use, _operator_ to package  custom resource and custom controller and deployed as a single entity
+- Checkout the following url for learning operators. You can for example check etcd
+```
+https://operatorhub.io/
+```
 
