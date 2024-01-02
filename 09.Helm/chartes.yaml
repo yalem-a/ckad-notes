@@ -1,0 +1,12 @@
+apiVersion: v1
+name: wordpress
+description: publishing platform
+keywords:
+  - wordpress
+  - cm
+home: http://wordpress.com
+sources:
+  - http://github.com/docker-wordpress
+maintainers:
+  - email: somone@somedomain.com
+    Name: someone
