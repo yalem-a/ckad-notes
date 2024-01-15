@@ -16,9 +16,9 @@ Controlling access to kube-apiserver is the focus of this security module.
   - Node authorizer
   - Webhook mode
 ### Authentication
-- Admins and developers : User acconuts
+- Admins and developers : User accounts
 - Bots - service accounts
-** k8 does not manage user accounts natively; rathe relies on external source like file, certs, ldap.
+** k8 does not manage user accounts natively; rather relies on external source like file, certs, ldap.
 We can not create user accounts directly on kubernetes, however,_Serviceaccounts_ can be created on kubernetes.
 - Creating service account
 ```
@@ -108,7 +108,7 @@ kubectl config use-context prod-user@production
 ```
 kubectl config current-context
 ```
-** Context section in kubeconfig file also has "namespace" which allows specifically swithcing to particular namespace
+** Context section in kubeconfig file also has "namespace" which allows specifically switching to particular namespace
 - Switching to another context based on non-default kubeconfig file
 ```
 kubectl config use-context research --kubeconfig=/root/my-kube-config
@@ -161,7 +161,7 @@ kubectl proxy
       ```
       - every time change is made to ABAC policy kube-apiserver must be restarted. This is makes it difficult
   - RBAC
-    - Define a role-> associate permisions to the role->assign users that role
+    - Define a role-> associate permissions to the role->assign users that role
   - Webhook
     - outsources authorization mechanisms like open policy agent
     - authorization decisions are made externally
@@ -298,7 +298,7 @@ Go to the following file and check _--enabe-admission-plugins_ section
 ```
 cat /etc/kubernetes/manifests/kube-apiserver.yaml
 ```
-- Checking enabled and disbaled admission plugins
+- Checking enabled and disabled admission plugins
 ```
 ps -ef | grep kube-apiserver | grep admission-plugins
 ```

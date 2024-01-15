@@ -20,3 +20,7 @@ spec:
   serviceName: mysql-headless # headless serviceName, will be considered as sub-domain-name for DNS record
   podManagementPolicy: Parallel # Avoid ordered approach when scaling down and scaling up.
                                 # Default value is : OrderedReady
+
+# In stateful set we don't need to specify the following setting to apply headless services.
+  # subdomain
+  # hostname
